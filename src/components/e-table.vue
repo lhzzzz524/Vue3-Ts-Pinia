@@ -1,10 +1,13 @@
 <template>
   <div>
-    <el-table :data="tableList" stripe style="width: 100%">
+    <el-table :data="tableList" stripe style="width: 100%" size="large">
+      <el-table-column type="selection" width="80" align="center" />
       <template v-for="item in propList" :key="item.prop">
         <el-table-column v-bind="item" align="center">
           <template #default="scope">
-            <span>{{ item?.prop ? scope.row[item.prop] : '' }}</span>
+            <slot :name="item.slotName" :row="scope.row">{{
+              item?.prop ? scope.row[item.prop] : ''
+            }}</slot>
           </template>
         </el-table-column>
       </template>
@@ -27,4 +30,4 @@ withDefaults(defineProps<IProp>(), {
 })
 </script>
 
-<style lang="less"></style>
+<style lang="less" scoped></style>

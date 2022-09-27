@@ -10,7 +10,23 @@
     </el-card>
     <div class="user-table">
       <el-card>
-        <ETable :propList="propList" :tableList="tableList"></ETable>
+        <ETable :propList="propList" :tableList="tableList">
+          <template #status="{ row }">
+            <el-tag class="ml-2" :type="row.enable ? 'success' : 'warning'">
+              <span>{{ row.enable ? '启用' : '禁用' }}</span>
+            </el-tag>
+          </template>
+          <template #createAt="{ row }">
+            <span>{{ dayjs(row.createAt).format('YYYY-MM-DD HH:hh:mm') }}</span>
+          </template>
+          <template #updateAt="{ row }">
+            <span>{{ dayjs(row.updateAt).format('YYYY-MM-DD HH:hh:mm') }}</span>
+          </template>
+          <template #handle>
+            <el-button type="text">编辑</el-button>
+            <el-button type="text">删除</el-button>
+          </template>
+        </ETable>
       </el-card>
     </div>
   </div>
@@ -23,6 +39,7 @@ import ETable from '@/components/e-table.vue'
 import type { IFormItem, IPropList } from '@/components/type'
 import { Search, RefreshRight } from '@element-plus/icons-vue'
 import { reactive } from 'vue'
+import dayjs from 'dayjs'
 
 import useTable from '@/hooks/system/user/useTable'
 
@@ -97,23 +114,9 @@ const propList: IPropList[] = [
   { prop: 'realname', label: '真实性名', minWidth: '100' },
   { prop: 'cellphone', label: '手机号码', minWidth: '100' },
   { prop: 'enable', label: '状态', minWidth: '100', slotName: 'status' },
-  {
-    prop: 'createAt',
-    label: '创建时间',
-    minWidth: '250',
-    slotName: 'createAt'
-  },
-  {
-    prop: 'updateAt',
-    label: '更新时间',
-    minWidth: '250',
-    slotName: 'updateAt'
-  },
-  {
-    label: '操作',
-    minWidth: '120',
-    slotName: 'operation'
-  }
+  { prop: 'createAt', label: '创建时间', minWidth: '250', slotName: 'createAt' },
+  { prop: 'updateAt', label: '更新时间', minWidth: '250', slotName: 'updateAt' },
+  { label: '操作', minWidth: '120', slotName: 'handle' }
 ]
 
 // 表格数据渲染
@@ -130,7 +133,13 @@ const search = () => {
 }
 .user {
   &-table {
+    height: calc(100vh - 190px);
+    overflow: auto;
     margin-top: 20px;
+  }
+  .handleBtn {
+    cursor: pointer;
+    color: #409eff;
   }
 }
 </style>
