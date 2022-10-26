@@ -1,5 +1,5 @@
 <template>
-  <div class="myForm">
+  <div class="myForm" ref="myForm">
     <el-form style="padding-top: 18px">
       <el-row>
         <template v-for="item in formItem" :key="item.label">
@@ -43,8 +43,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import LocalCache from '@/utils/cache'
 import type { IFormItem } from './type'
+import { computed, onMounted, ref, nextTick } from 'vue'
 
 interface IProps {
   formItem: IFormItem[]
@@ -68,11 +69,18 @@ const myFormModel = computed({
     emit('update:formModel', newValue)
   }
 })
+
+const myForm = ref<HTMLElement>()
+onMounted(() => {
+  nextTick(() => {
+    LocalCache.setCache('formHeight', myForm.value?.clientHeight)
+  })
+})
 </script>
 
 <style lang="less">
 .searchButtons {
   text-align: right;
-  margin-right: 30px;
+  margin-right: 8px;
 }
 </style>

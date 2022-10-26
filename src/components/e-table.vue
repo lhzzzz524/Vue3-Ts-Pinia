@@ -1,6 +1,20 @@
 <template>
   <div>
-    <el-table :data="tableList" stripe style="width: 100%" size="large">
+    <div class="header">
+      <div class="header-title">
+        <slot name="header"></slot>
+      </div>
+      <div class="header-button">
+        <slot name="button"></slot>
+      </div>
+    </div>
+    <el-table
+      :data="tableList"
+      stripe
+      size="large"
+      class="table table-fixed"
+      :style="{ height: `calc(100vh - 270px - ${LocalCache.getCache('formHeight')}px + 100px)` }"
+    >
       <el-table-column type="selection" width="80" align="center" />
       <template v-for="item in propList" :key="item.prop">
         <el-table-column v-bind="item" align="center">
@@ -12,16 +26,19 @@
         </el-table-column>
       </template>
     </el-table>
+    <div class="pagination">
+      <slot name="pagination"></slot>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { IPropList } from './type'
-import type { IUserTabelList } from '@/service/type'
+import LocalCache from '@/utils/cache'
 
 interface IProp {
   propList: IPropList[]
-  tableList: IUserTabelList[]
+  tableList: any[]
 }
 
 withDefaults(defineProps<IProp>(), {
@@ -30,4 +47,35 @@ withDefaults(defineProps<IProp>(), {
 })
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.header {
+  position: sticky;
+  top: 10px;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  &-title {
+    text-align: left;
+    font-size: 16px;
+    font-weight: bold;
+  }
+}
+
+/deep/ .table {
+  width: 100%;
+  overflow: auto;
+  .el-table__body-wrapper {
+    top: 48px;
+  }
+  .el-table__inner-wrapper::before {
+    height: 0;
+  }
+}
+
+.pagination {
+  /deep/ .el-pagination {
+    justify-content: flex-end;
+  }
+  padding-top: 20px;
+}
+</style>

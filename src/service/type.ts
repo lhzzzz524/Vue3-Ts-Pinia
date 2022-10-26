@@ -9,20 +9,8 @@ export interface ILoginRes {
   token: string
 }
 
-export interface IUserTabelList {
-  id: number
-  name: string
-  realname: string
-  cellphone: string
-  enable: number
-  departmentId: number
-  roleId: number
-  createAt: Date
-  updateAt: Date
-}
-
 export interface IUserTableRes {
-  list: IUserTabelList[]
+  list: any[]
   totalCount: number
 }
 

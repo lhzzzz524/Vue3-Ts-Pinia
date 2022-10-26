@@ -4,13 +4,19 @@
       <EForm :formItem="formItem" v-model:formModel="formModel">
         <template #searchButtons>
           <el-button type="primary" :icon="Search" @click="search">搜索</el-button>
-          <el-button type="primary" plain :icon="RefreshRight">重置</el-button>
+          <el-button type="primary" :icon="RefreshRight" plain @click="search(true)"
+            >重置</el-button
+          >
         </template>
       </EForm>
     </el-card>
     <div class="user-table">
       <el-card>
         <ETable :propList="propList" :tableList="tableList">
+          <template #header>用户列表</template>
+          <template #button>
+            <el-button type="primary">增加</el-button>
+          </template>
           <template #status="{ row }">
             <el-tag class="ml-2" :type="row.enable ? 'success' : 'warning'">
               <span>{{ row.enable ? '启用' : '禁用' }}</span>
@@ -23,8 +29,17 @@
             <span>{{ dayjs(row.updateAt).format('YYYY-MM-DD HH:hh:mm') }}</span>
           </template>
           <template #handle>
-            <el-button type="text">编辑</el-button>
-            <el-button type="text">删除</el-button>
+            <el-button type="primary" link>编辑</el-button>
+            <el-button type="primary" link>删除</el-button>
+          </template>
+          <template #pagination>
+            <el-pagination
+              v-model:currentPage="currentPage4"
+              v-model:page-size="pageSize4"
+              :page-sizes="[100, 200, 300, 400]"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="400"
+            />
           </template>
         </ETable>
       </el-card>
@@ -33,98 +48,39 @@
 </template>
 
 <script setup lang="ts">
+import { formItem, model } from './config/formItem'
+import propList from './config/propList'
 import EForm from '@/components/e-form.vue'
 import ETable from '@/components/e-table.vue'
 
-import type { IFormItem, IPropList } from '@/components/type'
 import { Search, RefreshRight } from '@element-plus/icons-vue'
-import { reactive } from 'vue'
+import { getTable } from '@/service/main/system/user'
+import { ref, onMounted } from 'vue'
 import dayjs from 'dayjs'
+// import useTable from '@/hooks/useTable'
 
-import useTable from '@/hooks/system/user/useTable'
+// 绑定form字段
+const formModel = ref<any>({ ...model })
+const tableList = ref<any[]>([])
 
-const formItem: IFormItem[] = [
-  {
-    field: 'id',
-    type: 'input',
-    label: 'id',
-    labelWidth: '70',
-    placeholder: '请输入id'
-  },
-  {
-    field: 'name',
-    type: 'input',
-    label: '用户名',
-    labelWidth: '70',
-    placeholder: '请输入用户名'
-  },
-  {
-    field: 'realName',
-    type: 'input',
-    label: '真实姓名',
-    labelWidth: '70',
-    placeholder: '请输入真实姓名'
-  },
-  {
-    field: 'cellPhone',
-    type: 'input',
-    label: '手机号码',
-    labelWidth: '70',
-    placeholder: '请输入手机号码'
-  },
-  {
-    field: 'enable',
-    type: 'select',
-    width: '255',
-    labelWidth: '70',
-    label: '状态',
-    placeholder: '请进行选择',
-    option: [
-      {
-        value: 1,
-        label: '停用'
-      },
-      {
-        value: 0,
-        label: '启用'
-      }
-    ]
-  },
-  {
-    field: 'createAt',
-    type: 'dataPicker',
-    labelWidth: '70',
-    label: '创建日期',
-    otherOption: {
-      startPlaceholder: '开始时间',
-      endPlaceholder: '结束时间',
-      type: 'daterange'
-    }
+onMounted(async () => {
+  // 表格数据渲染
+  const res = await getTable({ offset: 0, size: 10 }, 'users')
+  tableList.value = res.data?.list as any[]
+})
+
+// 搜索
+const search = async (isClear = false) => {
+  if (typeof isClear === 'boolean' && isClear) {
+    formModel.value = { ...model }
   }
-]
 
-const formModel = reactive<any>({})
-// 收集双向绑定字段
-for (const i of formItem) {
-  formModel[i.field] = ''
+  const res = await getTable({ offset: 0, size: 10, ...formModel.value }, 'users')
+  tableList.value = res.data?.list as any[]
 }
 
-const propList: IPropList[] = [
-  { prop: 'name', label: '用户名', minWidth: '100' },
-  { prop: 'realname', label: '真实性名', minWidth: '100' },
-  { prop: 'cellphone', label: '手机号码', minWidth: '100' },
-  { prop: 'enable', label: '状态', minWidth: '100', slotName: 'status' },
-  { prop: 'createAt', label: '创建时间', minWidth: '250', slotName: 'createAt' },
-  { prop: 'updateAt', label: '更新时间', minWidth: '250', slotName: 'updateAt' },
-  { label: '操作', minWidth: '120', slotName: 'handle' }
-]
-
-// 表格数据渲染
-const { tableList } = useTable()
-
-const search = () => {
-  console.log(formModel)
-}
+const currentPage4 = ref(4)
+const pageSize4 = ref(100)
 </script>
 
 <style lang="less">
@@ -133,8 +89,6 @@ const search = () => {
 }
 .user {
   &-table {
-    height: calc(100vh - 190px);
-    overflow: auto;
     margin-top: 20px;
   }
   .handleBtn {
