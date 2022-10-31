@@ -55,19 +55,15 @@ import ETable from '@/components/e-table.vue'
 
 import { Search, RefreshRight } from '@element-plus/icons-vue'
 import { getTable } from '@/service/main/system/user'
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import dayjs from 'dayjs'
-// import useTable from '@/hooks/useTable'
+import useTable from '@/hooks/useTable'
 
 // 绑定form字段
 const formModel = ref<any>({ ...model })
-const tableList = ref<any[]>([])
 
-onMounted(async () => {
-  // 表格数据渲染
-  const res = await getTable({ offset: 0, size: 10 }, 'users')
-  tableList.value = res.data?.list as any[]
-})
+// 表格渲染
+const { tableList } = useTable('users')
 
 // 搜索
 const search = async (isClear = false) => {

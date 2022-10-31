@@ -46,7 +46,7 @@ import { formItem, model } from './config/formItem'
 
 import { Search, RefreshRight } from '@element-plus/icons-vue'
 import useTable from '@/hooks/useTable'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import dayjs from 'dayjs'
 
 // 绑定form字段
@@ -54,6 +54,9 @@ const formModel = reactive(model)
 
 // 表格数据渲染
 const { tableList } = useTable('role')
-console.log(tableList)
+
+const currentPage4 = ref(4)
+const pageSize4 = ref(100)
 </script>
+
 <style lang="less" scoped></style>
