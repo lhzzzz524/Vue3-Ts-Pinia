@@ -74,6 +74,7 @@ const search = async (isClear = false) => {
   const res = await getTable({ offset: 0, size: 10, ...formModel.value }, 'users')
   tableList.value = res.data?.list as any[]
 }
+console.log('我是程序员2')
 
 const currentPage4 = ref(4)
 const pageSize4 = ref(100)
