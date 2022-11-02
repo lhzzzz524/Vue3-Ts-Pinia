@@ -51,11 +51,9 @@ import dayjs from 'dayjs'
 
 // 绑定form字段
 const formModel = reactive(model)
-console.log('1111')
 
 // 表格数据渲染
 const { tableList } = useTable('role')
-console.log('11111')
 
 const currentPage4 = ref(4)
 const pageSize4 = ref(100)
