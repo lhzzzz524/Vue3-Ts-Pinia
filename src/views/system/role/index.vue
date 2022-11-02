@@ -57,6 +57,8 @@ const { tableList } = useTable('role')
 
 const currentPage4 = ref(4)
 const pageSize4 = ref(100)
+
+console.log('优化1')
 </script>
 
 <style lang="less" scoped></style>
